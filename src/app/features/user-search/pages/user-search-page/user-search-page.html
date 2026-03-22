@@ -1,0 +1,10 @@
+<app-search-input (search)="onSearch($event)"></app-search-input>
+
+<div *ngIf="loading" style="color: blue; font-weight: bold;">⏳ Loading...</div>
+<div *ngIf="error" style="color: red; font-weight: bold;">❌ Something went wrong</div>
+
+<hr>
+<h3>User List Component:</h3>
+<app-user-list [users]="users"></app-user-list>
+
+<hr>
