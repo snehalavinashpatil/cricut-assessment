@@ -1,10 +1,48 @@
- <div *ngIf="users.length; else empty">
+ <!-- <div *ngIf="users.length; else empty">
       <div *ngFor="let user of users" class="card">
         <h3>{{ user.name }}</h3>
         <p>{{ user.email }}</p>
         <small>{{ user.phone }}</small>
       </div>
-    </div>
+  </div> -->
+
+  <mat-accordion multi="true">  
+    <mat-expansion-panel *ngFor="let user of users; trackBy: trackById">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ user.name }}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{ user.email }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div (click)="navigateToUserDetail(user.id)" style="cursor: pointer;">
+        <section style="padding: 8px 0; border-bottom: 1px solid #eee; margin-bottom: 8px;">
+          <h4>Personal Details</h4>
+          <p><strong>Username:</strong> {{ user.name }}</p>
+          <p><strong>Phone:</strong> {{ user.phone }}</p>
+          <p><strong>Website:</strong> {{ user.website }}</p>
+        </section>
+
+        <section style="padding: 8px 0; border-bottom: 1px solid #eee; margin-bottom: 8px;">
+          <h4>Professional Details</h4>
+          <p><strong>Company:</strong> {{ user.company?.name }}</p>
+          <p><strong>Catch phrase:</strong> {{ user.company?.catchPhrase }}</p>
+          <p><strong>BS:</strong> {{ user.company?.bs }}</p>
+        </section>
+
+        <section style="padding: 8px 0;">
+          <h4>Address</h4>
+          <p><strong>Street:</strong> {{ user.address?.street }}</p>
+          <p><strong>Suite:</strong> {{ user.address?.suite }}</p>
+          <p><strong>City:</strong> {{ user.address?.city }}</p>
+          <p><strong>Zipcode:</strong> {{ user.address?.zipcode }}</p>
+          <p><strong>Geo:</strong> {{ user.address?.geo?.lat }}, {{ user.address?.geo?.lng }}</p>
+        </section>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 
     <ng-template #empty>
       <p>No users found</p>

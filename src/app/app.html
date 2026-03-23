@@ -1,2 +1,17 @@
-<h1>{{ title() }}</h1>
-<app-user-search-page></app-user-search-page>
+<header>
+  <mat-toolbar color="primary">
+    <span class="app-title">{{ title() }}</span>
+    <span class="spacer"></span>
+  </mat-toolbar>
+</header>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<footer>
+  <mat-toolbar color="accent">
+    <span>&copy; 2026 User Management System. All rights reserved.</span>
+    <span class="spacer"></span>
+  </mat-toolbar>
+</footer>

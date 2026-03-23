@@ -1,12 +1,16 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { UserSearchPage } from './features/user-search/pages/user-search-page/user-search-page';
+import { RouterModule } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-root',
-  imports: [UserSearchPage],
+  standalone: true,
+  imports: [
+    RouterModule,
+    MatToolbarModule
+  ],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss']
 })
 export class App {
   protected readonly title = signal('cricut-assessment');

@@ -1,5 +1,20 @@
-    <input
-      type="text"
-      placeholder="Search users..."
-      (input)="onInput($event)"
-    />
+<mat-form-field appearance="outline" class="search-field">
+  <mat-label>Search users</mat-label>
+  <input
+    matInput
+    type="text"
+    placeholder="Search users..."
+    [value]="searchValue"
+    (input)="onInput($event)"
+  />
+  <button
+    *ngIf="searchValue"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear search"
+    (click)="onClear()"
+  >
+    <mat-icon>clear</mat-icon>
+  </button>
+  <mat-icon matPrefix>search</mat-icon>
+</mat-form-field>

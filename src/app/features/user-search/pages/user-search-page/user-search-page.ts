@@ -17,7 +17,10 @@ export class UserSearchPage implements OnInit, OnDestroy {
   users: IUser[] = [];
   loading = false;
   error = false;
+  private currentSearchQuery = '';
+  savedSearchQuery = ''; // For binding to search input
   private destroy$ = new Subject<void>();
+  private readonly SEARCH_STORAGE_KEY = 'current_search_query';
 
   constructor(private userService: UserService, private cdr: ChangeDetectorRef) {
     console.log('UserSearchPage component created');
@@ -25,7 +28,29 @@ export class UserSearchPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('UserSearchPage ngOnInit called');
+    // Clear cache to ensure fresh data on navigation
+    this.userService.clearCache();
+    // Restore search query from sessionStorage
+    this.restoreSearchQuery();
     this.loadAllUsers();
+    
+    // Subscribe to user updates from the service
+    // This will automatically update the list when a user is modified
+    this.userService.users$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(updatedUsers => {
+        console.log('User list updated from service:', updatedUsers);
+        if (updatedUsers && updatedUsers.length > 0) {
+          this.allUsers = updatedUsers;
+          // Re-apply current search filter if any
+          if (this.currentSearchQuery && this.currentSearchQuery.trim() !== '') {
+            this.onSearch(this.currentSearchQuery);
+          } else {
+            this.users = [...this.allUsers];
+          }
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   loadAllUsers() {
@@ -40,11 +65,10 @@ export class UserSearchPage implements OnInit, OnDestroy {
         next: (users) => {
           console.log('✅ loadAllUsers() - Subscribe next received:', users);
           console.log('✅ Users loaded count:', users ? users.length : 0);
-          this.allUsers = users;
-          this.users = users;
+          // Don't set this.users here - let the users$ subscription handle filtering
           this.loading = false;
           this.cdr.markForCheck();
-          console.log('✅ Component users array updated:', this.users);
+          console.log('✅ Users loaded, filtering will be applied by subscription');
         },
         error: (err) => {
           console.error('❌ loadAllUsers() - Subscribe error:', err);
@@ -60,6 +84,11 @@ export class UserSearchPage implements OnInit, OnDestroy {
 
   onSearch(query: string) {
     console.log('onSearch() called with query:', query);
+    this.currentSearchQuery = query;
+    this.savedSearchQuery = query;
+    // Persist search query to sessionStorage
+    this.saveSearchQuery(query);
+    
     if (!query || query.trim() === '') {
       this.users = [...this.allUsers];
       console.log('Filtered results count if:', this.users.length);
@@ -71,6 +100,28 @@ export class UserSearchPage implements OnInit, OnDestroy {
       console.log('Filtered results count else:', this.users.length);
     }
     this.cdr.markForCheck();
+  }
+
+  private saveSearchQuery(query: string): void {
+    try {
+      sessionStorage.setItem(this.SEARCH_STORAGE_KEY, query);
+      console.log('Search query saved to sessionStorage:', query);
+    } catch (error) {
+      console.error('Error saving search query:', error);
+    }
+  }
+
+  private restoreSearchQuery(): void {
+    try {
+      const savedQuery = sessionStorage.getItem(this.SEARCH_STORAGE_KEY);
+      if (savedQuery) {
+        console.log('Restored search query from sessionStorage:', savedQuery);
+        this.savedSearchQuery = savedQuery;
+        this.currentSearchQuery = savedQuery;
+      }
+    } catch (error) {
+      console.error('Error restoring search query:', error);
+    }
   }
 
   ngOnDestroy() {

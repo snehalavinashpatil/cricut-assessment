@@ -1,10 +1,11 @@
-<app-search-input (search)="onSearch($event)"></app-search-input>
+<app-search-input [initialValue]="savedSearchQuery" (search)="onSearch($event)"></app-search-input>
 
-<div *ngIf="loading" style="color: blue; font-weight: bold;">⏳ Loading...</div>
+<div *ngIf="loading" class="skeleton-container">
+  <div class="skeleton" style="margin-bottom: 12px;"></div>
+  <div class="skeleton" style="margin-bottom: 12px;"></div>
+  <div class="skeleton" style="margin-bottom: 12px;"></div>
+</div>
 <div *ngIf="error" style="color: red; font-weight: bold;">❌ Something went wrong</div>
 
-<hr>
-<h3>User List Component:</h3>
+<h3>User List:</h3>
 <app-user-list [users]="users"></app-user-list>
-
-<hr>
