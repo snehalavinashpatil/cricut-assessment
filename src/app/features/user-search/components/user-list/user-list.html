@@ -27,18 +27,18 @@
 
         <section style="padding: 8px 0; border-bottom: 1px solid #eee; margin-bottom: 8px;">
           <h4>Professional Details</h4>
-          <p><strong>Company:</strong> {{ user.company?.name }}</p>
-          <p><strong>Catch phrase:</strong> {{ user.company?.catchPhrase }}</p>
-          <p><strong>BS:</strong> {{ user.company?.bs }}</p>
+          <p><strong>Company:</strong> {{ user.company.name }}</p>
+          <p><strong>Catch phrase:</strong> {{ user.company.catchPhrase }}</p>
+          <p><strong>BS:</strong> {{ user.company.bs }}</p>
         </section>
 
         <section style="padding: 8px 0;">
           <h4>Address</h4>
-          <p><strong>Street:</strong> {{ user.address?.street }}</p>
-          <p><strong>Suite:</strong> {{ user.address?.suite }}</p>
-          <p><strong>City:</strong> {{ user.address?.city }}</p>
-          <p><strong>Zipcode:</strong> {{ user.address?.zipcode }}</p>
-          <p><strong>Geo:</strong> {{ user.address?.geo?.lat }}, {{ user.address?.geo?.lng }}</p>
+          <p><strong>Street:</strong> {{ user.address.street }}</p>
+          <p><strong>Suite:</strong> {{ user.address.suite }}</p>
+          <p><strong>City:</strong> {{ user.address.city }}</p>
+          <p><strong>Zipcode:</strong> {{ user.address.zipcode }}</p>
+          <p><strong>Geo:</strong> {{ user.address.geo.lat }}, {{ user.address.geo.lng }}</p>
         </section>
       </div>
     </mat-expansion-panel>

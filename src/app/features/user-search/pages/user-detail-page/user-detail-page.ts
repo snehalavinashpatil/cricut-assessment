@@ -40,9 +40,7 @@ export class UserDetailPage implements OnInit {
 
   ngOnInit() {
     const userIdParam = this.route.snapshot.paramMap.get('id');
-    console.log('Route param id:', userIdParam);
     const userId = Number(userIdParam);
-    console.log('Parsed userId:', userId);
     if (userId && !isNaN(userId)) {
       this.loadUser(userId);
     } else {
@@ -53,10 +51,8 @@ export class UserDetailPage implements OnInit {
 
   private loadUser(userId: number) {
     this.loading = true;
-    console.log('Loading user with ID:', userId);
     this.userService.getUserById(userId).subscribe({
       next: (user: IUser) => {
-        console.log('User data received:', user);
         this.user = user;
         this.initializeForm();
         this.loading = false;
@@ -77,9 +73,6 @@ export class UserDetailPage implements OnInit {
     }
     
     try {
-      console.log('Initializing form with user data:', this.user);
-      
-      // Ensure company and address exist as default objects
       const company = this.user.company || { name: '', catchPhrase: '', bs: '' };
       const address = this.user.address || { street: '', suite: '', city: '', zipcode: '', geo: { lat: '', lng: '' } };
       const geo = address.geo || { lat: '', lng: '' };
@@ -107,8 +100,6 @@ export class UserDetailPage implements OnInit {
         })
       });
       
-      console.log('Form successfully created:', this.userForm.value);
-      console.log('Form status:', this.userForm.status);
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error creating form:', error);
@@ -125,11 +116,9 @@ export class UserDetailPage implements OnInit {
       this.saving = true;
       const formValue = this.userForm.value;
       
-      // Merge form values with existing user object
       const updatedUser: IUser = {
         ...this.user,
         ...formValue,
-        // Ensure nested objects are properly merged
         company: {
           ...this.user.company,
           ...formValue.company
@@ -144,19 +133,12 @@ export class UserDetailPage implements OnInit {
         }
       };
       
-      console.log('Saving user:', updatedUser);
-      
-      // Call the update service method
       this.userService.updateUser(updatedUser).subscribe({
         next: (savedUser: IUser) => {
-          console.log('User saved successfully:', savedUser);
-          // Update the local user object to reflect changes
           this.user = savedUser;
-          // Re-initialize form with updated data
           this.initializeForm();
           this.saving = false;
           this.cdr.detectChanges();
-          // Navigate back to user list after a short delay to ensure cache updates are complete
           setTimeout(() => {
             this.router.navigate(['/users']);
           }, 100);

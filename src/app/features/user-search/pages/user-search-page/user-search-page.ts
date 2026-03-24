@@ -18,31 +18,21 @@ export class UserSearchPage implements OnInit, OnDestroy {
   loading = false;
   error = false;
   private currentSearchQuery = '';
-  savedSearchQuery = ''; // For binding to search input
+  savedSearchQuery = '';
   private destroy$ = new Subject<void>();
   private readonly SEARCH_STORAGE_KEY = 'current_search_query';
 
-  constructor(private userService: UserService, private cdr: ChangeDetectorRef) {
-    console.log('UserSearchPage component created');
-  }
+  constructor(private userService: UserService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    console.log('UserSearchPage ngOnInit called');
-    // Clear cache to ensure fresh data on navigation
-    this.userService.clearCache();
-    // Restore search query from sessionStorage
     this.restoreSearchQuery();
     this.loadAllUsers();
     
-    // Subscribe to user updates from the service
-    // This will automatically update the list when a user is modified
     this.userService.users$
       .pipe(takeUntil(this.destroy$))
       .subscribe(updatedUsers => {
-        console.log('User list updated from service:', updatedUsers);
         if (updatedUsers && updatedUsers.length > 0) {
           this.allUsers = updatedUsers;
-          // Re-apply current search filter if any
           if (this.currentSearchQuery && this.currentSearchQuery.trim() !== '') {
             this.onSearch(this.currentSearchQuery);
           } else {
@@ -54,7 +44,6 @@ export class UserSearchPage implements OnInit, OnDestroy {
   }
 
   loadAllUsers() {
-    console.log('loadAllUsers() - Starting to load users');
     this.loading = true;
     this.error = false;
     this.cdr.markForCheck();
@@ -63,12 +52,8 @@ export class UserSearchPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (users) => {
-          console.log('✅ loadAllUsers() - Subscribe next received:', users);
-          console.log('✅ Users loaded count:', users ? users.length : 0);
-          // Don't set this.users here - let the users$ subscription handle filtering
           this.loading = false;
           this.cdr.markForCheck();
-          console.log('✅ Users loaded, filtering will be applied by subscription');
         },
         error: (err) => {
           console.error('❌ loadAllUsers() - Subscribe error:', err);
@@ -77,27 +62,22 @@ export class UserSearchPage implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         complete: () => {
-          console.log('✅ loadAllUsers() - Subscribe complete');
         }
       });
   }
 
   onSearch(query: string) {
-    console.log('onSearch() called with query:', query);
     this.currentSearchQuery = query;
     this.savedSearchQuery = query;
-    // Persist search query to sessionStorage
     this.saveSearchQuery(query);
     
     if (!query || query.trim() === '') {
       this.users = [...this.allUsers];
-      console.log('Filtered results count if:', this.users.length);
     } else {
       this.users = this.allUsers.filter(user =>
         user.name.toLowerCase().includes(query.toLowerCase()) ||
         user.email.toLowerCase().includes(query.toLowerCase())
       );
-      console.log('Filtered results count else:', this.users.length);
     }
     this.cdr.markForCheck();
   }
@@ -105,7 +85,6 @@ export class UserSearchPage implements OnInit, OnDestroy {
   private saveSearchQuery(query: string): void {
     try {
       sessionStorage.setItem(this.SEARCH_STORAGE_KEY, query);
-      console.log('Search query saved to sessionStorage:', query);
     } catch (error) {
       console.error('Error saving search query:', error);
     }
@@ -115,7 +94,6 @@ export class UserSearchPage implements OnInit, OnDestroy {
     try {
       const savedQuery = sessionStorage.getItem(this.SEARCH_STORAGE_KEY);
       if (savedQuery) {
-        console.log('Restored search query from sessionStorage:', savedQuery);
         this.savedSearchQuery = savedQuery;
         this.currentSearchQuery = savedQuery;
       }
@@ -125,7 +103,6 @@ export class UserSearchPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('UserSearchPage ngOnDestroy called');
     this.destroy$.next();
     this.destroy$.complete();
   }
